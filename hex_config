@@ -1,0 +1,63 @@
+#--- NeuralNet Parameters for Hex ---#
+
+[Types]
+stagnation_type      = DefaultStagnation
+reproduction_type    = DefaultReproduction
+
+[phenotype]
+# 1 for each dot, and 3 for the pieces
+input_nodes          = 64
+
+# arbitary, mean of input and output
+hidden_nodes         = 0
+
+# the position in the array, and the piece to place
+output_nodes         = 2
+
+# EVERYTHING ELSE IN THIS SECTION IS ARBITRARY
+initial_connection   = fully_connected
+max_weight           = 50
+min_weight           = -50
+feedforward          = 1
+activation_functions = sigmoid
+weight_stdev         = 1.0
+
+[genetic]
+pop_size                = 100
+# value > 1 will never halt selection
+max_fitness_threshold   = 100000
+
+prob_add_conn           = 0.7
+prob_delete_conn        = 0.1
+
+prob_add_node           = 0.2
+prob_delete_node        = 0.05
+
+prob_mutate_bias        = 0.8
+bias_mutation_power     = 1
+
+prob_mutate_response    = 0.5
+response_mutation_power = 0.5
+
+prob_mutate_weight      = 0.6
+prob_replace_weight     = 0.1
+weight_mutation_power   = 2
+
+prob_mutate_activation  = 0.1
+prob_toggle_link        = 0.02
+# 0 or 1
+reset_on_extinction     = 1
+
+[genotype compatibility]
+compatibility_threshold = 0.7
+excess_coefficient      = 1.0
+disjoint_coefficient    = 1.0
+weight_coefficient      = 0.3
+
+[DefaultStagnation]
+species_fitness_func = mean
+max_stagnation       = 15
+
+[DefaultReproduction]
+elitism              = 1
+survival_threshold   = 0.2

@@ -6,6 +6,27 @@ class Game:
   def __init__(self):
     self.score = 0
     self.board = Board(9)
+    self.pieces = [new_piece(), new_piece(), new_piece()]
+
+  def add_piece(self):
+    self.pieces.append(new_piece())
+
+  def game_over(self):
+    possible = False
+    for piece in self.pieces:
+      for row in range(len(self.board.board)):
+        for pos in range(len(self.board.board[row])):
+          if self.board.can_place_piece(piece, [row, pos]):
+            possible = True
+            break
+        else:
+          continue
+        break
+      else:
+        continue
+      break
+
+    return (not possible)
 
   # Checks to see if there are any full rows
   # Rows are defined by a starting position, a direction, and a length (for calculation ease)
@@ -98,12 +119,12 @@ class Game:
     return completed
 
   # Make a move
-  def make_move(self, board, piece, loc):
+  def make_move(self, piece, loc):
     # Places the piece
-    board.place_piece(piece, loc)
+    self.board.place_piece(piece, loc)
 
     # Check to see if any rows were completed (by the piece)
-    rows = self.completed_rows(board, piece, loc)
+    rows = self.completed_rows(self.board, piece, loc)
 
     # Handles scoring
     score = 40 # for placing a piece
@@ -113,47 +134,11 @@ class Game:
         # Number of pieces * (base score * 1.2^row index)
         score += int(row[2] * (math.floor((base * max(1.2**i, 1)))))
 
-    # # Clears those rows
+    # Clears those rows
     for row in rows:
-      board.clear_row(row)
+      self.board.clear_row(row)
 
-    return score
+    self.score += score
 
-  def find_best_move(self, board, pieces):
-    best_loc = False
-    best_score = 0
-    best_piece = None
-
-    for i in range(len(pieces)):
-      piece = pieces[i]
-      for row in range(len(board.board)):
-        for pos in range(len(board.board[row])):
-          if board.can_place_piece(piece, [row, pos]):
-            score = self.make_move(copy.deepcopy(board), piece, [row, pos])
-            if score > best_score:
-              best_score = score
-              best_loc = [row, pos]
-              best_piece = i
-
-    return [best_loc, i]
-
-  def play(self):
-    can_play = True
-    pieces = []
-
-    while(can_play):
-      # Generate a new piece
-      if (len(pieces) < 3): # Have option to use 3 pieces
-        pieces.append(new_piece())
-
-      choice = self.find_best_move(self.board, pieces)
-      loc = choice[0]
-      piece = pieces.pop(choice[1])
-
-      if (loc):
-        self.score += self.make_move(self.board, piece, loc)
-      else:
-        can_play = False
-
-  def print_outcome(self):
+  def print_board(self):
     self.board.print_self()

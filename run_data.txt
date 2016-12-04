@@ -1,0 +1,16 @@
+49.824ms - run one game
+104ms
+200ms
+
+
+0.016ms - create a new board
+0.073ms - print board
+0.010ms - grab a new piece
+
+cleared - .1ms, run a TON of times
+
+(v1) 10k, depth 1 -> 8,360 [9.82 mins]
+(v1) 1k, depth 1 -> 4917 [52 s]
+(v2) 1k, depth 1 (3 choices) -> 7,965 [44s]
+(v2) 10k, depth 1 -> 10,744 [7.64 mins]
+(v2) 100k, depth 1 -> 15,586 [1.29 hrs]

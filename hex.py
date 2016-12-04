@@ -1,20 +1,75 @@
 from timing import timing
 from board import Board
 from game import Game
+import math, pickle
 
-# @timing
-def test():
-  best_score = 0
-  best_game = None
-  for i in xrange(0, 10):
-    g = Game()
-    g.play()
+from neat import nn, population
 
-    if g.score > best_score:
-      best_score = g.score
-      best_game = g
+class Player:
+  def __init__(self, genome):
+    self.genome = genome
+    self.nn = nn.create_feed_forward_phenotype(genome)
+    self.game = Game()
+    self.done = False
 
-  best_game.print_outcome()
-  print best_score
+    # Generate quick way to find the location
+    self.locs = []
+    for row in range(len(self.game.board.board)):
+      for pos in range(len(self.game.board.board[row])):
+        self.locs.append([row, pos])
 
-test()
+  def make_move(self):
+    # Input 1: the board in an array of 0's and 1's
+    board = [1 if x > 0 else 0 for x in sum(self.game.board.board, [])]
+
+    #Input 2: the pieces available in an array of 3 numbers representing the pieces
+    pieces = [x.index for x in self.game.pieces]
+
+    outputs = self.nn.serial_activate(board + pieces)
+
+    loc = self.locs[int((outputs[0] - 1e-16) * (len(self.locs)))]
+    piece = self.game.pieces.pop(int((outputs[1] - 1e-16) * 3))
+
+    self.game.add_piece()
+
+    # Check if it's a valid move
+    if (self.game.board.can_place_piece(piece, loc)):
+      self.game.make_move(piece, loc)
+      return True
+    else:
+      return False
+
+
+best_fitness = 0
+best_genome = None
+
+# Run one set of evolutions
+def evolve(genomes):
+  global best_fitness, best_genome
+
+  players = []
+  for genome in genomes:
+    players.append(Player(genome))
+
+  # Keep playing until every game is finished
+  still_playing = len(players)
+  while (still_playing):
+    for player in players:
+      if player.done:
+        continue
+      else:
+        success = player.make_move()
+        if (not success or player.game.game_over()):
+          player.done = True
+          still_playing -= 1
+          player.genome.fitness = player.game.score
+
+          # Save the current best genome
+          if (player.game.score > best_fitness):
+            best_fitness = player.game.score
+            best_genome = player.genome
+            with open('curr_best_genome', 'wb') as f:
+              pickle.dump(best_genome, f)
+
+pop = population.Population('hex_config')
+pop.run(evolve, 10000)

@@ -43,15 +43,18 @@ pieces = {
 }
 
 class Piece:
-  def __init__(self, path, color):
+  def __init__(self, path, color, index):
     self.path = path
     self.color = color
+    self.index = index
 
 # Generate easier to use pool
 pool = []
+index = 0
 for color in pieces:
   for path in pieces[color]:
-    pool.append(Piece(path, color))
+    pool.append(Piece(path, color, index))
+    index += 1
 
 # Generates a new piece (randomly)
 def new_piece():
