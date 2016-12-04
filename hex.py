@@ -3,7 +3,7 @@ from board import Board
 from game import Game
 import math, pickle
 
-from neat import nn, population
+from neat import nn, population, config
 
 class Player:
   def __init__(self, genome):
@@ -39,13 +39,20 @@ class Player:
     else:
       return False
 
-
+generations = 0
 best_fitness = 0
+fitness_history = []
 best_genome = None
 
 # Run one set of evolutions
 def evolve(genomes):
-  global best_fitness, best_genome
+  global best_fitness, best_genome, generations
+
+  gen_best = 0
+
+  generations += 1
+
+  print " ******** Generation " + str(generations) + " ********"
 
   players = []
   for genome in genomes:
@@ -64,12 +71,23 @@ def evolve(genomes):
           still_playing -= 1
           player.genome.fitness = player.game.score
 
+          # Save the generational best
+          if (player.game.score > gen_best):
+            gen_best = player.game.score
+
           # Save the current best genome
           if (player.game.score > best_fitness):
             best_fitness = player.game.score
             best_genome = player.genome
-            with open('curr_best_genome', 'wb') as f:
+            fitness_history.append(best_fitness)
+            player.game.print_board()
+            with open('curr_best_genome_2', 'wb') as f:
               pickle.dump(best_genome, f)
 
-pop = population.Population('hex_config')
-pop.run(evolve, 10000)
+  print "Best player: " + str(gen_best)
+
+config = config.Config('hex_config')
+config.report = False
+pop = population.Population(config)
+pop.run(evolve, 2500)
+print fitness_history
