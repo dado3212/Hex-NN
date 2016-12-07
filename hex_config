@@ -15,7 +15,7 @@ hidden_nodes         = 0
 output_nodes         = 2
 
 # EVERYTHING ELSE IN THIS SECTION IS ARBITRARY
-initial_connection   = fully_connected
+initial_connection   = unconnected
 max_weight           = 50
 min_weight           = -50
 feedforward          = 1
