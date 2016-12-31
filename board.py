@@ -1,28 +1,34 @@
 # coding: utf-8
 
+from timing import timing
 import sys, math
 
 class Move:
-  piece = None
-  loc = None
-
   def __init__(self, piece, loc):
     self.piece = piece
     self.loc = loc
 
 class Board:
-  board = []
-  score = 0
-
   def __init__(self, moves):
-    self.board = []
+    self.board = [
+          [0,0,0,0,0],
+         [0,0,0,0,0,0],
+        [0,0,0,0,0,0,0],
+       [0,0,0,0,0,0,0,0],
+      [0,0,0,0,0,0,0,0,0],
+       [0,0,0,0,0,0,0,0],
+        [0,0,0,0,0,0,0],
+         [0,0,0,0,0,0],
+          [0,0,0,0,0]
+    ]
     self.score = 0
-
-    self.create_board(9)
 
     # Iterate through all of the previous moves
     for move in moves:
       self.make_move(move)
+
+  def key(self):
+    return "".join(["".join([str(pos) for pos in row]) for row in self.board])
 
   def duplicate(self):
     b = Board([])
@@ -32,14 +38,13 @@ class Board:
 
   # Get all valid moves
   def get_moves(self, pieces):
+    key = self.key()
     valid = []
-
     for piece in pieces:
       for row in range(len(self.board)):
         for pos in range(len(self.board[row])):
           if self.can_place_piece(piece, [row, pos]):
             valid.append(Move(piece, [row, pos]))
-
     return valid
 
   # Make a move
@@ -212,7 +217,7 @@ class Board:
     return self.board[loc[0]][loc[1]]
 
   # Creates a new board
-  def create_board(self, board_size):
+  def create_board(self):
     board = []
     m = (board_size + 1)/2
     for i in range(0, m):
