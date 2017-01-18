@@ -12,7 +12,7 @@ input_nodes          = 64
 hidden_nodes         = 0
 
 # the position in the array, and the piece to place
-output_nodes         = 2
+output_nodes         = 62
 
 # EVERYTHING ELSE IN THIS SECTION IS ARBITRARY
 initial_connection   = unconnected
@@ -27,19 +27,19 @@ pop_size                = 150
 # value > 1 will never halt selection
 max_fitness_threshold   = 100000
 
-prob_add_conn           = 0.5
-prob_delete_conn        = 0.125
+prob_add_conn           = 0.4
+prob_delete_conn        = 0.3
 
 prob_add_node           = 0.5
-prob_delete_node        = 0.125
+prob_delete_node        = 0.4
 
-prob_mutate_bias        = 0.9
-bias_mutation_power     = 0.5
+prob_mutate_bias        = 0.05
+bias_mutation_power     = 2.0
 
-prob_mutate_response    = 0.8
+prob_mutate_response    = 0.4
 response_mutation_power = 0.5
 
-prob_mutate_weight      = 0.8
+prob_mutate_weight      = 0.2
 prob_replace_weight     = 0.1
 weight_mutation_power   = 0.5
 

@@ -27,17 +27,17 @@ class Player:
 
     outputs = self.nn.serial_activate(board + pieces)
 
-    loc = self.locs[int((outputs[0] - 1e-16) * (len(self.locs)))]
-    piece = self.game.pieces.pop(int((outputs[1] - 1e-16) * 3))
+    output_locs = sorted(enumerate(outputs[:-1]), key=lambda x: x[1], reverse=True)
+    piece = self.game.pieces.pop(int((outputs[-1] - 1e-16) * 3))
 
     self.game.add_piece()
 
-    # Check if it's a valid move
-    if (self.game.board.can_place_piece(piece, loc)):
-      self.game.make_move(piece, loc)
-      return True
-    else:
-      return False
+    # Place the best possible move
+    for loc in output_locs:
+      if (self.game.board.can_place_piece(piece, self.locs[loc[0]])):
+        self.game.make_move(piece,  self.locs[loc[0]])
+        return True
+    return False
 
 generations = 0
 best_fitness = 0
@@ -67,19 +67,6 @@ def evolve(genomes):
   still_playing = len(players)
   while (still_playing and not done):
     # Pygame close functionality
-    for event in pygame.event.get():
-      if event.type == pygame.QUIT:
-        done = True 
-        break
-
-    # Game display code
-    screen.fill(pygame.Color(255, 255, 255, 255))
-    pygame.draw.rect(screen, (20, 50, 100), [10, 70, 500, 210])
-    screen.blit(font.render("ALIVE: " + str(still_playing), 2, (255,255,255)), (20, 80))
-    #screen.blit(font.render("TIME: " + str(round(time.time() - lifespanStart, 2)) + " s", 2, (255,255,255)), (20, 120))
-    screen.blit(font.render("GENERATION: " + str(generations), 2, (255,255,255)), (20, 160))
-    screen.blit(font.render("CURRENT BEST SCORE: " + str(best_fitness) + " pts", 2, (255,255,255)), (20, 200))
-    #screen.blit(font.render("CURRENT BEST FITNESS: " + str(currentBestFitness), 2, (255,255,255)), (20, 240))
 
     for player in players:
       if player.done:
@@ -100,26 +87,19 @@ def evolve(genomes):
             best_fitness = player.game.score
             best_genome = player.genome
             fitness_history.append(best_fitness)
-            player.game.print_board()
-            with open('curr_best_genome_4', 'wb') as f:
+            # player.game.print_board()
+            with open('curr_best_genome_v3', 'wb') as f:
               pickle.dump(best_genome, f)
 
-    pygame.display.update()
-    pygame.display.flip()
 
   print "Best player: " + str(gen_best)
 
 # Initialize display window
-pygame.init()
-font = pygame.font.SysFont("Arial", 12)
-screen = pygame.display.set_mode((512, 512))
-pygame.display.set_caption('Hex Player')
-pygame.display.update()
 
 config = config.Config('hex_config')
 config.report = False
 pop = population.Population(config)
-pop.run(evolve, 10000)
+pop.run(evolve, 2500)
 pop.save_checkpoint("checkpoint.csv")
 
 statistics.save_stats(pop.statistics)
