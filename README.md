@@ -1,5 +1,5 @@
 # Hex-NN
-A Python neural net implementation of Hex FRVR
+A Pythonic search implementation of Hex FRVR
 
 Before (average of 10 games):
 - Made all of the moves: 4s
