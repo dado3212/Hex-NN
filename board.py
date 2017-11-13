@@ -1,7 +1,7 @@
 # coding: utf-8
 
 from timing import timing
-import sys, math
+import sys, math, numpy as np
 
 class Move:
   def __init__(self, piece, loc):
@@ -22,6 +22,7 @@ class Board:
           [0,0,0,0,0]
     ]
     self.score = 0
+    self.score_last = 0
 
     # Iterate through all of the previous moves
     for move in moves:
@@ -29,6 +30,10 @@ class Board:
 
   def key(self):
     return "".join(["".join([str(pos) for pos in row]) for row in self.board])
+
+  # Figure out how many spaces are left open
+  def space(self):
+    return 61 - reduce((lambda x, y: x + y), [np.count_nonzero(row) for row in self.board])
 
   def duplicate(self):
     b = Board([])
@@ -70,6 +75,7 @@ class Board:
     for row in rows:
       self.clear_row(row)
 
+    self.score_last = score
     self.score += score
 
   # Checks to see if there are any full rows
@@ -213,23 +219,15 @@ class Board:
       return False
     return True
 
+  '''
+    Get the value at a specific location
+  '''
   def val(self, loc):
     return self.board[loc[0]][loc[1]]
 
-  # Creates a new board
-  def create_board(self):
-    board = []
-    m = (board_size + 1)/2
-    for i in range(0, m):
-      row = []
-      for i in xrange(0, m+i):
-        row.append(0)
-      board.append(row)
-    for i in range(1, m):
-      board.append(board[m-1-i][:])
-    self.board = board
-
-  # Prints out itself
+  '''
+    Prints out the full board
+  '''
   def print_self(self):
     board = self.board
     board_size = len(board)
