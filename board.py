@@ -45,10 +45,9 @@ class Board:
 
   # Get all valid moves
   def get_moves(self, pieces):
-    key = self.key()
     valid = []
     for piece in pieces:
-      for row in range(len(self.board)):
+      for row in range(9):
         for pos in range(len(self.board[row])):
           if self.can_place_piece(piece, [row, pos]):
             valid.append(Move(piece, [row, pos]))
@@ -196,7 +195,7 @@ class Board:
 
   # Location helper
   def next_loc(self, loc, direction):
-    b = (len(self.board) - 1)/2
+    b = 4
 
     if direction == 'l':
       return [loc[0], loc[1]-1]
