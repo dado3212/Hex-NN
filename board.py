@@ -32,10 +32,6 @@ class Board:
   def key(self):
     return "".join(["".join([str(pos) for pos in row]) for row in self.board])
 
-  # Figure out how many spaces are left open
-  def space(self):
-    return self.spaces
-
   def duplicate(self):
     b = Board([])
     b.board = [x[:] for x in self.board]
