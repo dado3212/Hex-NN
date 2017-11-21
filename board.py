@@ -23,6 +23,7 @@ class Board:
     ]
     self.score = 0
     self.score_last = 0
+    self.spaces = 61
 
     # Iterate through all of the previous moves
     for move in moves:
@@ -33,12 +34,13 @@ class Board:
 
   # Figure out how many spaces are left open
   def space(self):
-    return 61 - reduce((lambda x, y: x + y), [np.count_nonzero(row) for row in self.board])
+    return self.spaces
 
   def duplicate(self):
     b = Board([])
     b.board = [x[:] for x in self.board]
     b.score = self.score
+    b.spaces = self.spaces
     return b
 
   # Get all valid moves
@@ -172,8 +174,11 @@ class Board:
   def place_piece(self, piece, loc):
     board = self.board
 
+    self.spaces -= 1
+
     board[loc[0]][loc[1]] = piece.color
     for d in piece.path:
+      self.spaces -= 1
       loc = self.next_loc(loc, d)
       board[loc[0]][loc[1]] = piece.color
 
@@ -185,6 +190,7 @@ class Board:
       while (True):
         board[loc[0]][loc[1]] = 0
         loc = self.next_loc(loc, row[1])
+        self.spaces += 1
     except:
       pass
 

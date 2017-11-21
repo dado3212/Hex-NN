@@ -72,13 +72,19 @@ best_player = None
 
 def average_time():
   diff = 0
-  for i in xrange(1, 20):
+  score = 0
+
+  num_iterations = 30
+  for i in xrange(1, num_iterations):
     t = time.time()
     player = Player()
     player.finish()
     diff += (time.time() - t)
+    score += player.finished_board.score
 
-  print diff / 20 # Number of seconds
+  print diff / num_iterations # Number of seconds
+  print score / num_iterations # Average number of points
+  print float(score) / diff # Average number of points/sec
 
 def evaluate(a):
   print evaluate
