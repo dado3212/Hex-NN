@@ -97,25 +97,30 @@ def evaluate(a):
       best_player = player
       best_player.status()
 
-try:
-  best = []
-  best_score = 0
-  for score_weighting in range(1, 5):
-    for space_weighting in range(0, 220, 20):
-      for move_weighting in range(1, 5):
-        a = average_run(10)
-        print str(score_weighting) + " - " + str(space_weighting) + " - " + str(a[1])
-        if a[1] > best_score:
-          best = [score_weighting, space_weighting, move_weighting]
-          best_score = a[1]
-          print best_score
-except KeyboardInterrupt:
-  print ""
-  print score_weighting
-  print space_weighting
-  print move_weighting
-  print best
-  print best_score
+# Got up to 3-180
+score_weighting = 2
+space_weighting = 180
+move_weighting = 1
+evaluate(100)
+# try:
+#   best = []
+#   best_score = 0
+#   for score_weighting in range(1, 5):
+#     for space_weighting in range(0, 220, 20):
+#       for move_weighting in range(1, 5):
+#         a = average_run(10)
+#         print str(score_weighting) + " - " + str(space_weighting) + " - " + str(a[1])
+#         if a[1] > best_score:
+#           best = [score_weighting, space_weighting, move_weighting]
+#           best_score = a[1]
+#           print best_score
+# except KeyboardInterrupt:
+#   print ""
+#   print score_weighting
+#   print space_weighting
+#   print move_weighting
+#   print best
+#   print best_score
 
 print "=====" # 0< 4, 100
 print best_score
