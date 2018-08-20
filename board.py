@@ -21,6 +21,9 @@ class Board:
          [0,0,0,0,0,0],
           [0,0,0,0,0]
     ]
+
+    self.cross_rows = [[[0, 0], [0, 1], [0, 2], [0, 3], [0, 4]], [[1, 0], [1, 1], [1, 2], [1, 3], [1, 4], [1, 5]], [[2, 0], [2, 1], [2, 2], [2, 3], [2, 4], [2, 5], [2, 6]], [[3, 0], [3, 1], [3, 2], [3, 3], [3, 4], [3, 5], [3, 6], [3, 7]], [[4, 0], [4, 1], [4, 2], [4, 3], [4, 4], [4, 5], [4, 6], [4, 7], [4, 8]], [[5, 0], [5, 1], [5, 2], [5, 3], [5, 4], [5, 5], [5, 6], [5, 7]], [[6, 0], [6, 1], [6, 2], [6, 3], [6, 4], [6, 5], [6, 6]], [[7, 0], [7, 1], [7, 2], [7, 3], [7, 4], [7, 5]], [[8, 0], [8, 1], [8, 2], [8, 3], [8, 4]], [[0, 0], [1, 1], [2, 2], [3, 3], [4, 4], [5, 4], [6, 4], [7, 4], [8, 4]], [[0, 1], [1, 2], [2, 3], [3, 4], [4, 5], [5, 5], [6, 5], [7, 5]], [[0, 2], [1, 3], [2, 4], [3, 5], [4, 6], [5, 6], [6, 6]], [[0, 3], [1, 4], [2, 5], [3, 6], [4, 7], [5, 7]], [[0, 4], [1, 5], [2, 6], [3, 7], [4, 8]], [[1, 0], [2, 1], [3, 2], [4, 3], [5, 3], [6, 3], [7, 3], [8, 3]], [[2, 0], [3, 1], [4, 2], [5, 2], [6, 2], [7, 2], [8, 2]], [[3, 0], [4, 1], [5, 1], [6, 1], [7, 1], [8, 1]], [[4, 0], [5, 0], [6, 0], [7, 0], [8, 0]], [[0, 0], [1, 0], [2, 0], [3, 0], [4, 0]], [[0, 1], [1, 1], [2, 1], [3, 1], [4, 1], [5, 0]], [[0, 2], [1, 2], [2, 2], [3, 2], [4, 2], [5, 1], [6, 0]], [[0, 3], [1, 3], [2, 3], [3, 3], [4, 3], [5, 2], [6, 1], [7, 0]], [[0, 4], [1, 4], [2, 4], [3, 4], [4, 4], [5, 3], [6, 2], [7, 1], [8, 0]], [[1, 5], [2, 5], [3, 5], [4, 5], [5, 4], [6, 3], [7, 2], [8, 1]], [[2, 6], [3, 6], [4, 6], [5, 5], [6, 4], [7, 3], [8, 2]], [[3, 7], [4, 7], [5, 6], [6, 5], [7, 4], [8, 3]], [[4, 8], [5, 7], [6, 6], [7, 5], [8, 4]]]
+
     self.score = 0
     self.score_last = 0
     self.spaces = 61
@@ -66,7 +69,7 @@ class Board:
       base = 10 * (len(rows) + 1)
       for i, row in enumerate(rows):
         # Number of pieces * (base score * 1.2^row index)
-        score += int(row[2] * (math.floor((base * max(1.2**i, 1)))))
+        score += int(len(row) * (math.floor((base * max(1.2**i, 1)))))
 
     # Clears those rows
     for row in rows:
@@ -78,90 +81,14 @@ class Board:
   # Checks to see if there are any full rows
   # Rows are defined by a starting position, a direction, and a length (for calculation ease)
   def completed_rows(self, piece, loc):
-    piece_locations = [loc]
-    for d in piece.path:
-      loc = self.next_loc(loc, d)
-      piece_locations.append(loc)
-
     completed = []
-
-    for location in piece_locations:
-      # Check each 'row' the piece is in to see if any of them are full
-      # Horizontal
-      loc = location[:]
-      found_horizontal = True
-      for pos in range(0, len(self.board[loc[0]])):
-        if self.val([loc[0], pos]) == 0:
-          found_horizontal = False
-          break
-      if found_horizontal:
-        row = [[location[0], 0], 'r', len(self.board[location[0]])]
-        if row not in completed:
-          completed.append(row)
-
-      # Down-right
-      loc = location[:]
-      found_dr = True
-      top = []
-      c = 0
-      try:
-        while (loc[0] >= 0 and loc[1] >= 0):
-          if self.val(loc) == 0:
-            found_dr = False
-            break
-          top = loc[:]
-          loc = self.next_loc(loc, 'ul')
-          c+=1
-      except Exception as e:
-        pass
-
-      loc = location[:]
-      c-=1 # don't double count point
-      try:
-        while (loc[0] >= 0 and loc[1] >= 0):
-          if self.val(loc) == 0:
-            found_dr = False
-            break
-          loc = self.next_loc(loc, 'dr')
-          c+=1
-      except Exception as e:
-        pass
-      if found_dr:
-        row = [top, 'dr', c]
-        if row not in completed:
-          completed.append(row)
-
-      # Down-left
-      loc = location[:]
-      found_dl = True
-      top = []
-      c = 0
-      try:
-        while (loc[0] >= 0 and loc[1] >= 0):
-          if self.val(loc) == 0:
-            found_dl = False
-            break
-          top = loc[:]
-          loc = self.next_loc(loc, 'ur')
-          c+=1
-      except Exception as e:
-        pass
-
-      loc = location[:]
-      c-=1 # don't double count point
-      try:
-        while (loc[0] >= 0 and loc[1] >= 0):
-          if self.val(loc) == 0:
-            found_dl = False
-            break
-          loc = self.next_loc(loc, 'dl')
-          c+=1
-      except Exception as e:
-        pass
-      if found_dl:
-        row = [top, 'dl', c]
-        if row not in completed:
-          completed.append(row)
+    for row in self.cross_rows:
+      is_finished = True
+      for loc in row:
+        if self.val(loc) == 0:
+          is_finished = False
+      if is_finished:
+        completed.append(row)
 
     return completed
 
@@ -180,14 +107,9 @@ class Board:
   def clear_row(self, row):
     board = self.board
 
-    loc = row[0]
-    try:
-      while (True):
-        board[loc[0]][loc[1]] = 0
-        loc = self.next_loc(loc, row[1])
-        self.spaces += 1
-    except:
-      pass
+    for loc in row:
+      board[loc[0]][loc[1]] = 0
+      self.spaces += 1
 
   # Location helper
   def next_loc(self, loc, direction):
