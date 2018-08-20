@@ -1,6 +1,6 @@
 from timing import timing
 from board import Board, Move
-from pieces import new_piece
+from pieces import new_piece, all_pieces
 import math, time
 from multiprocessing.dummy import Pool as ThreadPool 
 
@@ -21,7 +21,8 @@ class Player:
     global score_weighting, space_weighting, move_weighting
     board = self.append_move(b, move)
     next_moves = board.get_moves(pieces)
-    w = board.score_last * score_weighting + (board.spaces / 61.0) * space_weighting + len(next_moves) * move_weighting
+    possible_moves = board.get_moves(all_pieces())
+    w = board.score_last * score_weighting + (board.spaces / 61.0) * space_weighting + len(next_moves) * move_weighting + len(possible_moves) * possible_move_weighting
     if depth + 1 < max_depth:
       for move in next_moves:
         p = pieces[:]
@@ -88,7 +89,7 @@ def average_run(num_iterations):
 def evaluate(a):
   print evaluate
   global best_player
-  for i in xrange(1, 100):
+  for i in xrange(1, a):
     print i
     player = Player()
     player.finish()
@@ -101,6 +102,7 @@ def evaluate(a):
 score_weighting = 2
 space_weighting = 180
 move_weighting = 1
+possible_move_weighting = 1
 evaluate(100)
 # try:
 #   best = []

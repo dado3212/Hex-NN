@@ -50,11 +50,19 @@ class Piece:
 
 # Generate easier to use pool
 pool = []
+poolCollapsed = []
 index = 0
 for color in pieces:
   for path in pieces[color]:
     pool.append(Piece(path, color, index))
+    if (color != 1):
+      poolCollapsed.append(Piece(path, color, index))
     index += 1
+
+# Gets all of the pieces
+def all_pieces():
+  global poolCollapsed
+  return poolCollapsed
 
 # Generates a new piece (randomly)
 def new_piece():
